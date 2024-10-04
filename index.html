@@ -1,0 +1,176 @@
+<!DOCTYPE html><html><head><base href="https://infinitefusion.com/">
+<title>Elemental Alchemy - Discover and Create!</title>
+<style>
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    padding: 20px;
+    box-sizing: border-box;
+  }
+  #game-container {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+    max-width: 900px;
+  }
+  #elements, #workspace {
+    background: rgba(255,255,255,0.1);
+    border-radius: 15px;
+    padding: 20px;
+    width: 45%;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  }
+  .element {
+    background: rgba(255,255,255,0.2);
+    border: 2px solid rgba(255,255,255,0.3);
+    border-radius: 8px;
+    padding: 12px;
+    margin: 8px 0;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+  }
+  .element:hover {
+    background: rgba(255,255,255,0.3);
+    transform: scale(1.05);
+  }
+  #result {
+    margin-top: 20px;
+    font-size: 1.3em;
+    text-align: center;
+    min-height: 50px;
+  }
+  button {
+    background: #e94560;
+    border: none;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1.1em;
+    margin-top: 20px;
+    transition: all 0.3s ease;
+  }
+  button:hover {
+    background: #ff6b6b;
+    transform: scale(1.05);
+  }
+  h1 {
+    font-size: 2.5em;
+    margin-bottom: 30px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+  }
+  #workspace div {
+    min-height: 50px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 8px;
+    margin: 10px 0;
+    padding: 10px;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+  <h1>ZenElement Craft</h1>
+  <div id="game-container">
+    <div id="elements">
+      <h2>Known Elements</h2>
+      <!-- Elements will be dynamically added here -->
+    </div>
+    <div id="workspace">
+      <h2>Combine Elements</h2>
+      <div id="element1"></div>
+      <div id="element2"></div>
+      <button onclick="combineElements()" disabled="">Transmute</button>
+    </div>
+  </div>
+  <div id="result"></div>
+
+  <script>
+    const initialElements = ['Fire', 'Water', 'Earth', 'Air'];
+    let discoveredElements = [...initialElements];
+    let combinations = {
+      'FireWater': 'Steam',
+      'FireEarth': 'Lava',
+      'WaterEarth': 'Mud',
+      'WaterAir': 'Mist',
+      'EarthAir': 'Dust',
+      'FireAir': 'Smoke',
+      'SteamEarth': 'Geyser',
+      'LavaWater': 'Obsidian',
+      'MudFire': 'Brick',
+      'MistFire': 'Rainbow',
+      'DustWater': 'Clay',
+      'SmokeWater': 'Acid Rain'
+    };
+
+    const possibleElements = [
+      'Metal', 'Wood', 'Ice', 'Lightning', 'Sand', 'Glass', 'Plasma',
+      'Crystal', 'Magma', 'Oil', 'Ash', 'Bacteria', 'Algae', 'Fossil',
+      'Tar', 'Rust', 'Salt', 'Soap', 'Alcohol', 'Poison', 'Radiation',
+      'Electricity', 'Magnetism', 'Sound', 'Light', 'Shadow', 'Time',
+      'Void', 'Life', 'Death', 'Spirit', 'Mind', 'Idea', 'Knowledge'
+    ];
+
+    function updateElements() {
+      const elementContainer = document.getElementById('elements');
+      elementContainer.innerHTML = '<h2>Known Elements</h2>';
+      discoveredElements.forEach(element => {
+        const elementDiv = document.createElement('div');
+        elementDiv.className = 'element';
+        elementDiv.textContent = element;
+        elementDiv.onclick = () => selectElement(element);
+        elementContainer.appendChild(elementDiv);
+      });
+    }
+
+    let selectedElements = [];
+
+    function selectElement(element) {
+      if (selectedElements.length < 2) {
+        selectedElements.push(element);
+        document.getElementById(`element${selectedElements.length}`).textContent = element;
+      }
+      if (selectedElements.length === 2) {
+        document.querySelector('button').disabled = false;
+      }
+    }
+
+    function combineElements() {
+      const combination = selectedElements.sort().join('');
+      let result = combinations[combination];
+      
+      if (result) {
+        document.getElementById('result').textContent = `You created ${result}!`;
+        if (!discoveredElements.includes(result)) {
+          discoveredElements.push(result);
+          updateElements();
+        }
+      } else {
+        // Create a new combination
+        result = possibleElements[Math.floor(Math.random() * possibleElements.length)];
+        while (discoveredElements.includes(result)) {
+          result = possibleElements[Math.floor(Math.random() * possibleElements.length)];
+        }
+        combinations[combination] = result;
+        discoveredElements.push(result);
+        document.getElementById('result').textContent = `You discovered a new element: ${result}!`;
+        updateElements();
+      }
+
+      // Reset selection
+      selectedElements = [];
+      document.getElementById('element1').textContent = '';
+      document.getElementById('element2').textContent = '';
+      document.querySelector('button').disabled = true;
+    }
+
+    updateElements();
+  </script>
+</body></html>
